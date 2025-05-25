@@ -107,10 +107,11 @@ const updateStudent = async (req, res) => {
       [name, rol_no, fees, studentClass, medium, id]
     );
 
-    if (result.affectedRows === 0) {
+    if (!result || result.affectedRows === 0) {
       return res.status(404).json({
         status: false,
         message: "Student not found or already deleted",
+        description: "No student found with the provided ID",
       });
     }
 
@@ -155,10 +156,11 @@ const softDeleteStudent = async (req, res) => {
       [id]
     );
 
-    if (result.affectedRows === 0) {
+    if (!result || result.affectedRows === 0) {
       return res.status(404).json({
         status: false,
         message: "Student not found or already deleted",
+        description: "No student found with the provided ID",
       });
     }
 
@@ -198,10 +200,11 @@ const hardDeleteStudent = async (req, res) => {
       id,
     ]);
 
-    if (result.affectedRows === 0) {
+    if (!result || result.affectedRows === 0) {
       return res.status(404).json({
         status: false,
         message: "Student not found",
+        description: "No student found with the provided ID",
       });
     }
 
@@ -297,10 +300,11 @@ const patchStudent = async (req, res) => {
       values
     );
 
-    if (result.affectedRows === 0) {
+    if (!result || result.affectedRows === 0) {
       return res.status(404).json({
         status: false,
         message: "Student not found or already deleted",
+        description: "No student found with the provided ID",
       });
     }
 
