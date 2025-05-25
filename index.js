@@ -1,5 +1,8 @@
+const fs = require("fs");
 const express = require("express");
 const cors = require("cors");
+const colors = require("colors");
+const morgan = require("morgan");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -13,55 +16,91 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 // app.use("/api/v1/students", studentRoutes);
 
+// Morgan Logging (colored)
+// Setup morgan for logging
+if (process.env.NODE_ENV === "development") {
+  // Colorful dev logging to console
+  app.use(
+    morgan((tokens, req, res) => {
+      return [
+        colors.cyan(tokens.method(req, res)),
+        colors.yellow(tokens.url(req, res)),
+        colors.green(tokens.status(req, res)),
+        colors.magenta(tokens["response-time"](req, res) + "ms"),
+      ].join(" ");
+    })
+  );
+} else {
+  // Standard logging to access.log file in production
+  const accessLogStream = fs.createWriteStream(
+    path.join(__dirname, "access.log"),
+    { flags: "a" }
+  );
+  app.use(morgan("combined", { stream: accessLogStream }));
+}
 // Root endpoint
 app.get("/", (req, res) => {
-  res.json({
-    message: "Student Management API",
-    version: "1.0.0",
-    endpoints: {
-      api: "/api/v1",
-      students: "/api/v1/students",
-    },
-  });
+  res.status(200).send(`
+  <html>
+      <head><title>Student Management API</title></head>
+      <body style="font-family: sans-serif">
+        <h1 style="color: darkblue">Welcome to the Student Management API</h1>
+        <p>This API allows you to manage student records efficiently.</p>
+        <p><strong>Message:</strong> Student Management API</p>
+        <p><strong>Version:</strong> 1.0.0</p>
+        <ul>
+          <li>API Base: <code>/api/v1</code></li>
+          <li>Students Endpoint: <code>/api/v1/students</code></li>
+        </ul>
+      </body>
+    </html>
+  `);
 });
 
 // Test database connection on startup
 const initializeApp = async () => {
   try {
-    console.log("🚀 Starting Student Management API...");
-    console.log(`🌍 Environment: ${process.env.NODE_ENV}`);
-    console.log(`🖥️  Server: ${process.env.HOST}:${process.env.PORT}`);
+    console.log("🚀 Starting Student Management API...".cyan.bold);
+    console.log(`🌍 Environment: ${process.env.NODE_ENV}`.blue);
+    console.log(`🖥️  Server: ${process.env.HOST}:${process.env.PORT}`.yellow);
 
     // Test database connection
-    console.log("🔍 Testing database connection...");
-    const dbConnected = await testConnection();
-    console.log("✅ Database connection successful");
-    if (!dbConnected) {
-      throw new Error("Database connection failed");
-    }
+    // console.log("🔍 Testing database connection...".magenta);
+    // const dbConnected = await testConnection();
+    // if (!dbConnected) {
+    //   throw new Error("Database connection failed");
+    // }
+    // console.log("✅ Database connection successful".green.bold);
 
     // Start server
     app.listen(process.env.PORT, process.env.HOST, () => {
-      console.log(`🎉 Server running at ${process.env.HOST_URL}`);
-      console.log(`📡 API endpoint: ${process.env.HOST_URL}/api/v1/students`);
-      console.log("✨ Ready to accept connections!");
+      console.log(`🎉 Server running at ${process.env.HOST_URL}`.rainbow);
+      console.log(
+        `📡 API endpoint: ${process.env.HOST_URL}/api/v1/students`.bgMagenta
+          .italic.underline
+      );
+      console.log("✨ Ready to accept connections!".bold.green);
     });
   } catch (error) {
-    console.error("💥 Failed to start application:", error.message);
-    console.error("Stack trace:", error.stack);
+    console.error(
+      "💥 Failed to start application:".red.bold,
+      error.message.red
+    );
+    console.error("Stack trace:".gray, error.stack);
     process.exit(1);
   }
 };
 
 // Global error handlers
 process.on("uncaughtException", (error) => {
-  console.error("💥 Uncaught Exception:", error.message);
-  console.error("Stack trace:", error.stack);
+  console.error("💥 Uncaught Exception:".bgRed.white, error.message);
+  console.error("Stack trace:".gray, error.stack);
   process.exit(1);
 });
 
 process.on("unhandledRejection", (reason, promise) => {
-  console.error("💥 Unhandled Rejection at:", promise, "reason:", reason);
+  console.error("💥 Unhandled Rejection at:".bgRed.white, promise);
+  console.error("Reason:".gray, reason);
   process.exit(1);
 });
 
@@ -69,3 +108,12 @@ process.on("unhandledRejection", (reason, promise) => {
 initializeApp();
 
 module.exports = app;
+
+// CREATE TABLE `students_management_db`.`students` (
+//   `id` INT NOT NULL AUTO_INCREMENT,
+//   `name` VARCHAR(450) NULL,
+//   `rol_no` INT NULL,
+//   `fees` INT NULL,
+//   `class` INT NULL,
+//   `medium` VARCHAR(45) NULL,
+//   PRIMARY KEY (`id`));
