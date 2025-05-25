@@ -17,9 +17,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
-app.use("/api/v1/students", studentRoutes);
-
 // Morgan Logging (colored)
 // Setup morgan for logging
 if (process.env.NODE_ENV === "development") {
@@ -42,6 +39,10 @@ if (process.env.NODE_ENV === "development") {
   );
   app.use(morgan("combined", { stream: accessLogStream }));
 }
+
+// Routes
+app.use("/api/v1/students", studentRoutes);
+
 // Root endpoint
 app.get("/", (req, res) => {
   res.status(200).send(`

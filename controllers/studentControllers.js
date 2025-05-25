@@ -41,12 +41,26 @@ const getAllStudents = async (req, res) => {
 const createStudent = async (req, res) => {
   try {
     const { name, rol_no, fees, class: studentClass, medium } = req.body;
+    if (!name || !rol_no || !fees || !studentClass || !medium) {
+      return res.status(400).json({
+        status: false,
+        message: "All fields are required",
+        description: "Please provide all required fields",
+      });
+    }
 
     const pool = db.getPool();
     const [result] = await pool.query(
       "INSERT INTO students (name, rol_no, fees, class, medium) VALUES (?, ?, ?, ?, ?)",
       [name, rol_no, fees, studentClass, medium]
     );
+    if (!result || result.affectedRows === 0) {
+      return res.status(500).json({
+        status: false,
+        message: "Failed to create student",
+        description: "There was an issue creating the student record",
+      });
+    }
 
     res.status(201).json({
       status: true,
@@ -227,10 +241,11 @@ const getStudent = async (req, res) => {
       [id]
     );
 
-    if (rows.length === 0) {
+    if (!rows || rows.length === 0) {
       return res.status(404).json({
         status: false,
         message: "Student not found",
+        description: "No student found with the provided ID",
       });
     }
 
