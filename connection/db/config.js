@@ -20,21 +20,6 @@ const {
   DB_KEEP_ALIVE_INITIAL_DELAY,
 } = process.env;
 
-console.log(
-  DB_HOST,
-  DB_PORT,
-  DB_USER,
-  DB_PASSWORD,
-  DB_NAME,
-  DB_CONNECTION_LIMIT,
-  DB_WAIT_FOR_CONNECTIONS,
-  DB_QUEUE_LIMIT,
-  DB_IDLE_TIMEOUT,
-  DB_MAX_IDLE,
-  DB_ENABLE_KEEP_ALIVE,
-  DB_KEEP_ALIVE_INITIAL_DELAY
-);
-
 // Validate required env vars
 assert(DB_HOST, "DB_HOST is required");
 assert(DB_PORT, "DB_PORT is required");

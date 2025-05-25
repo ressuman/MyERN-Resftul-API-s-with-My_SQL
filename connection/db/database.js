@@ -45,6 +45,8 @@ const testConnection = async () => {
   }
 };
 
-module.exports = connectDB;
-module.exports.testConnection = testConnection;
-module.exports.getPool = () => pool;
+module.exports = {
+  connectDB,
+  testConnection,
+  getPool: () => pool,
+};
