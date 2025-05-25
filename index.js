@@ -3,6 +3,9 @@ const express = require("express");
 const cors = require("cors");
 const colors = require("colors");
 const morgan = require("morgan");
+const connectDB = require("./connection/db/database");
+const { testConnection } = require("./connection/db/database");
+//const studentRoutes = require("./routes/studentRoutes");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -14,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-// app.use("/api/v1/students", studentRoutes);
+//app.use("/api/v1/students", studentRoutes);
 
 // Morgan Logging (colored)
 // Setup morgan for logging
@@ -65,12 +68,15 @@ const initializeApp = async () => {
     console.log(`🖥️  Server: ${process.env.HOST}:${process.env.PORT}`.yellow);
 
     // Test database connection
-    // console.log("🔍 Testing database connection...".magenta);
-    // const dbConnected = await testConnection();
-    // if (!dbConnected) {
-    //   throw new Error("Database connection failed");
-    // }
-    // console.log("✅ Database connection successful".green.bold);
+    const pool = await connectDB();
+    if (!pool) throw new Error("Database connection failed");
+
+    const dbConnected = await testConnection();
+    if (!dbConnected) throw new Error("Test connection failed");
+
+    app.listen(process.env.PORT, process.env.HOST, () => {
+      console.log(`🎉 Server running at ${process.env.HOST_URL}`);
+    });
 
     // Start server
     app.listen(process.env.PORT, process.env.HOST, () => {
