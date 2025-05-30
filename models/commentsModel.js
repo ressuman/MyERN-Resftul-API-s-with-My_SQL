@@ -1,6 +1,6 @@
 // File: models/commentsModel.js
 
-const createCommentModel = function (sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   const Comment = sequelize.define(
     "Comment",
     {
@@ -39,5 +39,3 @@ const createCommentModel = function (sequelize, DataTypes) {
 
   return Comment;
 };
-
-module.exports = createCommentModel;

@@ -1,6 +1,6 @@
 // File: models/categoryModel.js
 
-const createCategoryModel = function (sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   const Category = sequelize.define(
     "Category",
     {
@@ -43,5 +43,3 @@ const createCategoryModel = function (sequelize, DataTypes) {
 
   return Category;
 };
-
-module.exports = createCategoryModel;

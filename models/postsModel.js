@@ -1,6 +1,6 @@
 // File: models/postsModel.js
 
-const createPostModel = function (sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   const Post = sequelize.define(
     "Post",
     {
@@ -48,5 +48,3 @@ const createPostModel = function (sequelize, DataTypes) {
 
   return Post;
 };
-
-module.exports = createPostModel;

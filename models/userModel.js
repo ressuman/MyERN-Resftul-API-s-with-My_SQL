@@ -1,6 +1,6 @@
 // File: models/userModel.js
 
-const createUserModel = function (sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   const User = sequelize.define(
     "User",
     {
@@ -24,7 +24,7 @@ const createUserModel = function (sequelize, DataTypes) {
       },
     },
     {
-      table: "users",
+      tableName: "users",
       timestamps: true,
       paranoid: true,
     }
@@ -38,5 +38,3 @@ const createUserModel = function (sequelize, DataTypes) {
 
   return User;
 };
-
-module.exports = createUserModel;
