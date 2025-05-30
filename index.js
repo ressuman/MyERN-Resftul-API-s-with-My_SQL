@@ -5,13 +5,20 @@ const express = require("express");
 const cors = require("cors");
 const colors = require("colors");
 const morgan = require("morgan");
+const dotenv = require("dotenv");
+
 // const authRoutes = require("./routes/authRoutes");
 // const userRoutes = require("./routes/userRoutes");
 // const postsRoutes = require("./routes/postsRoutes");
 // const commentsRoutes = require("./routes/commentsRoutes");
 // const imagesRoutes = require("./routes/imagesRoutes");
 // const testRoutes = require("./routes/testRoutes");
-const dotenv = require("dotenv");
+
+// Sequelize
+const db = require("./models"); // loads and initializes models
+const { testConnection } = require("./connection/sequelize");
+const { sequelize } = db;
+
 dotenv.config();
 
 const app = express();
@@ -56,15 +63,15 @@ if (process.env.NODE_ENV === "development") {
 app.get("/", (req, res) => {
   res.status(200).send(`
   <html>
-      <head><title>Student Management API</title></head>
+      <head><title>Blog Content Platform</title></head>
       <body style="font-family: sans-serif">
-        <h1 style="color: darkblue">Welcome to the Student Management API</h1>
-        <p>This API allows you to manage student records efficiently.</p>
-        <p><strong>Message:</strong> Student Management API</p>
+        <h1 style="color: darkblue">Welcome to the Blog Content Platform API</h1>
+        <p>This API allows you to manage blog posts, categories, comments, and users.</p>
+        <p><strong>Message:</strong> Blog Content Platform API</p>
         <p><strong>Version:</strong> 1.0.0</p>
         <ul>
           <li>API Base: <code>/api/v1</code></li>
-          <li>Students Endpoint: <code>/api/v1/students</code></li>
+          <li>Example Endpoint: <code>/api/v1/posts</code></li>
         </ul>
       </body>
     </html>
@@ -74,11 +81,11 @@ app.get("/", (req, res) => {
 // Testing MySql Connection
 app.get("/test-db", async (req, res) => {
   try {
-    // await testConnection();
-    // const [results] = await sequelize.query("SELECT NOW() AS current_time");
-    // const [dbName] = await sequelize.query(
-    //   "SELECT current_database() AS db_name"
-    // );
+    await testConnection();
+    const [results] = await sequelize.query("SELECT NOW() AS current_time");
+    const [dbName] = await sequelize.query(
+      "SELECT current_database() AS db_name"
+    );
 
     res.status(200).json({
       message: "Database connection successful (via Sequelize)",
@@ -94,13 +101,17 @@ app.get("/test-db", async (req, res) => {
 // Test database connection on startup
 const initializeApp = async () => {
   try {
-    console.log("🚀 Starting Student Management API...".cyan.bold);
+    console.log("🚀 Starting Blog Content Platform API...".cyan.bold);
     console.log(`🌍 Environment: ${process.env.NODE_ENV}`.blue);
     console.log(`🖥️  Server: ${process.env.HOST}:${process.env.PORT}`.yellow);
 
     // Test database connection
-    // await testConnection(); // Sequelize test
-    // await db.sequelize.sync({ alter: true });
+    await testConnection(); // Sequelize test
+    await sequelize.authenticate();
+    console.log("✅ Sequelize DB connection authenticated.");
+
+    await sequelize.sync({ alter: true });
+    console.log("🔄 DB synced (alter: true)");
 
     // Start server
     app.listen(process.env.PORT, process.env.HOST, () => {
