@@ -10,17 +10,20 @@ const createCategoryModel = function (sequelize, DataTypes) {
         primaryKey: true,
       },
       name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(100),
         allowNull: false,
       },
       userId: {
         type: DataTypes.INTEGER,
+        allowNull: true,
       },
       commentId: {
         type: DataTypes.INTEGER,
+        allowNull: true,
       },
       postId: {
         type: DataTypes.INTEGER,
+        allowNull: true,
       },
       createdBy: DataTypes.INTEGER,
       updatedBy: DataTypes.INTEGER,
@@ -32,6 +35,11 @@ const createCategoryModel = function (sequelize, DataTypes) {
       paranoid: true,
     }
   );
+
+  Category.associate = function (models) {
+    Category.hasMany(models.Post, { foreignKey: "categoryId" });
+    Category.belongsTo(models.User, { foreignKey: "userId" });
+  };
 
   return Category;
 };

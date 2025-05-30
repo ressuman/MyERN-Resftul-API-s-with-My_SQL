@@ -9,10 +9,6 @@ const createCommentModel = function (sequelize, DataTypes) {
         autoIncrement: true,
         primaryKey: true,
       },
-      title: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
       content: {
         type: DataTypes.TEXT,
         allowNull: false,
@@ -35,6 +31,11 @@ const createCommentModel = function (sequelize, DataTypes) {
       paranoid: true,
     }
   );
+
+  Comment.associate = function (models) {
+    Comment.belongsTo(models.Post, { foreignKey: "postId" });
+    Comment.belongsTo(models.User, { foreignKey: "userId" });
+  };
 
   return Comment;
 };

@@ -10,7 +10,7 @@ const createPostModel = function (sequelize, DataTypes) {
         primaryKey: true,
       },
       title: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(150),
         allowNull: false,
       },
       content: {
@@ -18,7 +18,7 @@ const createPostModel = function (sequelize, DataTypes) {
         allowNull: false,
       },
       image_url: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(255),
         allowNull: true,
       },
       categoryId: {
@@ -39,6 +39,12 @@ const createPostModel = function (sequelize, DataTypes) {
       paranoid: true,
     }
   );
+
+  Post.associate = function (models) {
+    Post.belongsTo(models.User, { foreignKey: "userId" });
+    Post.belongsTo(models.Category, { foreignKey: "categoryId" });
+    Post.hasMany(models.Comment, { foreignKey: "postId" });
+  };
 
   return Post;
 };

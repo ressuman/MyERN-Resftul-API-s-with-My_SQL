@@ -14,11 +14,14 @@ const createUserModel = function (sequelize, DataTypes) {
         allowNull: false,
       },
       email: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(150),
         unique: true,
         allowNull: false,
       },
-      password: DataTypes.STRING,
+      password: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+      },
     },
     {
       table: "users",
@@ -26,6 +29,12 @@ const createUserModel = function (sequelize, DataTypes) {
       paranoid: true,
     }
   );
+
+  User.associate = function (models) {
+    User.hasMany(models.Post, { foreignKey: "userId" });
+    User.hasMany(models.Comment, { foreignKey: "userId" });
+    User.hasMany(models.Category, { foreignKey: "userId" });
+  };
 
   return User;
 };
